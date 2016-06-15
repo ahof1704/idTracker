@@ -841,39 +841,43 @@ if directorio(end)~=filesep
     directorio(end+1)=filesep;
 end
 ultimodir(directorio);
-if ~isempty(dir([directorio 'segm' filesep 'datosegm.mat']))
-   load([directorio 'segm' filesep 'datosegm.mat'])
-   if isstruct(variable)
-       datosegm=variable;
-       clear variable
-   else
-       datosegm=load_encrypt([directorio 'segm' filesep 'datosegm.mat'],1);
-   end
-   % Primero los campos que se ven en el panel
-   for c_campos=1:length(datos.campos)       
-       if isfield(h,datos.campos{c_campos})
-           if strcmpi(get(h.(datos.campos{c_campos}),'Style'),'edit')
-               set(h.(datos.campos{c_campos}),'String',num2str(datosegm.(datos.campos{c_campos})))
-           elseif strcmpi(get(h.(datos.campos{c_campos}),'Style'),'checkbox')
-               set(h.(datos.campos{c_campos}),'Value',datosegm.(datos.campos{c_campos}))
-           end
+if ~isequal(nombrearchivo,0)
+    if ~isempty(dir([directorio 'segm' filesep 'datosegm.mat']))
+       load([directorio 'segm' filesep 'datosegm.mat'])
+       if isstruct(variable)
+           datosegm=variable;
+           clear variable
+       else
+           datosegm=load_encrypt([directorio 'segm' filesep 'datosegm.mat'],1);
        end
-   end % c_campos
-   % Resto de los campos
-   if all(datos.datosegm.tam==datosegm.tam)
-       datos.datosegm.roi=datosegm.roi;
-       datos.datosegm.mascara_intensmed=datosegm.mascara_intensmed;
-       datos.datosegm.mascara=datosegm.mascara;
-       datos.datosegm.borde=datosegm.borde;
-   else
-        msgbox('Resolution is different in the two videos. Region of Interest and Region for Intensity Normalization could not be imported. All the other parameters have been successfully imported.','Parameters partially imported')
-   end
-   guidata(h.fig,datos)
-%    ocupado(ind_funcion)=0;
-%    ocupado(1)=1; % Reserva la vez para actualiza
-%    set(h.ocupado,'XData',ocupado); drawnow % Da la vez
-   actualiza(-1,[],h)
-   reactiva(1,h)
+       % Primero los campos que se ven en el panel
+       for c_campos=1:length(datos.campos)       
+           if isfield(h,datos.campos{c_campos})
+               if strcmpi(get(h.(datos.campos{c_campos}),'Style'),'edit')
+                   set(h.(datos.campos{c_campos}),'String',num2str(datosegm.(datos.campos{c_campos})))
+               elseif strcmpi(get(h.(datos.campos{c_campos}),'Style'),'checkbox')
+                   set(h.(datos.campos{c_campos}),'Value',datosegm.(datos.campos{c_campos}))
+               end
+           end
+       end % c_campos
+       % Resto de los campos
+       if all(datos.datosegm.tam==datosegm.tam)
+           datos.datosegm.roi=datosegm.roi;
+           datos.datosegm.mascara_intensmed=datosegm.mascara_intensmed;
+           datos.datosegm.mascara=datosegm.mascara;
+           datos.datosegm.borde=datosegm.borde;
+       else
+            msgbox('Resolution is different in the two videos. Region of Interest and Region for Intensity Normalization could not be imported. All the other parameters have been successfully imported.','Parameters partially imported')
+       end
+       guidata(h.fig,datos)
+    %    ocupado(ind_funcion)=0;
+    %    ocupado(1)=1; % Reserva la vez para actualiza
+    %    set(h.ocupado,'XData',ocupado); drawnow % Da la vez
+       actualiza(-1,[],h)
+       reactiva(1,h)
+    else
+        msgbox(sprintf('Tracking parameters not found\n\nThe file %ssegm\\datosegm.mat that contains the parameters does not exist',directorio),'Parameters not found')
+    end
 else
     msgbox(sprintf('Tracking parameters not found\n\nThe file %ssegm\\datosegm.mat that contains the parameters does not exist',directorio),'Parameters not found')
 end

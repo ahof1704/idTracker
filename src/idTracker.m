@@ -272,6 +272,7 @@ try
                 matlabpool open
             end     
         end
+        
         if ~isfield(datosegm,'muestrapanel') || datosegm.muestrapanel
             [datosegm,h_panel]=panel_identitracking(datosegm);
         end
@@ -957,16 +958,15 @@ try
 %         fclose(datosegm.id_log);
     end % if no saltatodo (por solodatosegm)
 catch me
-    if str2double(datosegm.MatlabVersion(1))>=9
-        try 
-            delete(MyPool)
-        catch
-        end
-    else
+    try 
+        if str2double(datosegm.MatlabVersion(1))>=9
+                delete(MyPool)
+        end 
+    catch
         try
             matlabpool close
         catch
-        end
+        end 
     end
     if nargin==0
         boton='Exit & create error log file';
